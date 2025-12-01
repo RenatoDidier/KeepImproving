@@ -1,2 +1,6 @@
 config:
   azure-native:location: brazilsouth
+  KeepImproving:dockerHubUser:
+    secure: AAABAFXgwzUyvzERcZeFlbwFt7M9wWCDo1Q3ZmH124ImWMUrEbk/Cf1zH0Y=
+  KeepImproving:dockerHubToken:
+    secure: AAABAHxSgcwM8ePc7V3mSUiUJmh++I4lwm2F7m/sEg2rR67RfL8JNXi97bKZ8nVdZIlVPRdSTQ0ecjU6z0VwTCuWRzA=

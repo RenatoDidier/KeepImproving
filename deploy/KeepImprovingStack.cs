@@ -1,9 +1,10 @@
 ﻿using Pulumi;
-using Pulumi.AzureNative.DBforMySQL;
-using Pulumi.AzureNative.DBforMySQL.Inputs;
+using Pulumi.Docker;
+using Pulumi.Docker.Inputs;
 using Pulumi.AzureNative.Resources;
 using Pulumi.AzureNative.Web;
 using Pulumi.AzureNative.Web.Inputs;
+using System;
 
 namespace KeepImproving.Deploy;
 
@@ -16,7 +17,30 @@ public static class PulumiNameFormatter
 }
 public class KeepImprovingStack : Stack
 {
-    public KeepImprovingStack() {
+    public KeepImprovingStack()
+    {
+        var config = new Pulumi.Config();
+
+        var dockerHubUser = config.RequireSecret("dockerHubUser");
+        var dockerHubToken = config.RequireSecret("dockerHubToken");
+
+        var image = new Image("keepimproving-image", new ImageArgs
+        {
+            ImageName = $"docker.io/{dockerHubUser}/keepimproving-api:latest",
+            Build = new DockerBuildArgs
+            {
+                Context = "../src/external/private/KeepImproving.API",
+                Dockerfile = "../src/external/private/KeepImproving.API/Dockerfile",
+                Platform = "linux/amd64"
+            },
+            Registry = new RegistryArgs
+            {
+                Server = "docker.io",
+                Username = dockerHubUser,
+                Password = dockerHubToken
+            }
+        });
+
 
         var stack = Pulumi.Deployment.Instance.StackName;
         var projectName = PulumiNameFormatter.Format(Pulumi.Deployment.Instance.ProjectName);
@@ -42,13 +66,24 @@ public class KeepImprovingStack : Stack
 
         var webApp = new WebApp("webApp", new()
         {
-            Kind = "linux,app",
+            Kind = "app,linux",
             Location = resourceGroup.Location,
             ResourceGroupName = resourceGroup.Name,
             Name = $"app-{projectName}-{stack}-api",
             ServerFarmId = appServicePlan.Id,
             SiteConfig = new SiteConfigArgs
             {
+                LinuxFxVersion = image.ImageName.Apply(img => $"DOCKER|{img}"),
+
+                AppSettings =
+                {
+                    new NameValuePairArgs
+                    {
+                        Name = "WEBSITES_PORT",
+                        Value = "8080"
+                    }
+
+                },
                 AutoHealEnabled = true,
                 HealthCheckPath = "/health",
             }
