@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeepImproving.Domain", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeepImproving.Application", "src\core\KeepImproving.Application\KeepImproving.Application.csproj", "{EC0990DA-C1E6-4B97-BDAA-51BA68A30EE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeepImproving.Infra", "KeepImproving.Infra\KeepImproving.Infra.csproj", "{C53736C1-E6E8-4341-B761-7E89E7A0ACF2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeepImproving.Infra", "src\external\KeepImproving.Infra\KeepImproving.Infra.csproj", "{C53736C1-E6E8-4341-B761-7E89E7A0ACF2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{F1AA3789-618A-4018-A9C9-D3EC709AC492}"
 EndProject
@@ -34,6 +34,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeepImproving.Infra.Test", "src\tests\external\KeepImproving.Infra.Test\KeepImproving.Infra.Test.csproj", "{ABDB4D43-305D-4D85-9274-47CDA835DEEF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeepImproving.API.Test", "src\tests\external\private\KeepImproving.API.Test\KeepImproving.API.Test.csproj", "{FCDC33AB-2AC6-425A-92A0-2736EF6C1C65}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "eng", "eng", "{2498E73A-4BBA-4A51-B008-374A34FC7829}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.Reference.props = Directory.Build.Reference.props
+		Directory.Packages.props = Directory.Packages.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

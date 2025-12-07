@@ -1,0 +1,22 @@
+<Project>
+
+    <PropertyGroup>
+        <RootPath Condition="  '$(RootPath)' == '' Or !HasTrailingSlash('$(RootPath)')  ">$(MSBuildThisFileDirectory)</RootPath>
+        <CorePath Condition="  '$(CorePath)' == '' Or !HasTrailingSlash('$(CorePath)')  ">$(RootPath)src/core</CorePath>
+        <ExternalPath Condition="  '$(ExternalPath)' == '' Or !HasTrailingSlash('$(ExternalPath)')  ">$(RootPath)src/external</ExternalPath>
+    </PropertyGroup>
+
+    <ItemGroup Condition="  $(MSBuildProjectName.EndsWith('.Application'))  ">
+        <ProjectReference Include="  $(CorePath)\KeepImproving.Domain\KeepImproving.Domain.csproj  " />
+    </ItemGroup>
+
+    <ItemGroup Condition="  $(MSBuildProjectName.EndsWith('.Infra'))  ">
+        <ProjectReference Include="  $(CorePath)\KeepImproving.Application\KeepImproving.Application.csproj  " />
+    </ItemGroup>
+
+    <ItemGroup Condition="  $(MSBuildProjectName.EndsWith('.API'))  ">
+        <ProjectReference Include="  $(CorePath)\KeepImproving.Application\KeepImproving.Application.csproj  " />
+        <ProjectReference Include="  $(ExternalPath)\KeepImproving.Infra\KeepImproving.Infra.csproj  " />
+    </ItemGroup>
+
+</Project>
