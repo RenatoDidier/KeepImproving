@@ -1,0 +1,58 @@
+<Project>
+
+    <Import Project="Directory.Build.Reference.props" />
+
+    <PropertyGroup>
+        <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+        <IsTestProject>false</IsTestProject>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <Title>API - Keep Improving</Title>
+        <Description>This app allows users to record activities they want to improve and track their progress over time. By saving each practice session and comparing past results, users can easily see how they are developing, identify trends, and stay motivated to reach their goals.</Description>
+        <Copyright>Copyright (c) 2025.</Copyright>
+        <RepositoryUrl>https://github.com/RenatoDidier/KeepImproving</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <NoWarn>CS1591</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" $(MSBuildProjectName.EndsWith('.Test')) ">
+        <IsTestProject>true</IsTestProject>
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    </PropertyGroup>
+    
+    <ItemGroup Condition="$(MSBuildProjectName.EndsWith('.Domain'))">
+    </ItemGroup>
+
+    <ItemGroup Condition=" $(MSBuildProjectName.EndsWith('.Application')) ">
+    </ItemGroup>
+
+    <ItemGroup Condition=" $(MSBuildProjectName.EndsWith('.Infrastructure')) ">
+    </ItemGroup>
+
+    <ItemGroup Condition=" $(MSBuildProjectName.EndsWith('.API')) ">
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    </ItemGroup>
+
+    <ItemGroup Condition=" $(MSBuildProjectName.EndsWith('.Tests')) ">
+        <Using Include="Xunit" />
+
+        <PackageReference Include="coverlet.collector">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="xunit" />
+        <PackageReference Include="xunit.runner.visualstudio">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+</Project>
