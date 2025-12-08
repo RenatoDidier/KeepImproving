@@ -38,6 +38,7 @@
 
     <ItemGroup Condition=" $(MSBuildProjectName.EndsWith('.API')) ">
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     </ItemGroup>
 
     <ItemGroup Condition=" $(MSBuildProjectName.EndsWith('.Tests')) ">
