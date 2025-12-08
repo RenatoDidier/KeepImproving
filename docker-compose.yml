@@ -1,7 +1,7 @@
 services:
   keep-improving:
     build:
-      context: ./src/external/private/KeepImproving.API
+      context: ./
       dockerfile: Dockerfile
     container_name: keep-improving
     ports:

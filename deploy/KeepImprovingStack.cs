@@ -23,7 +23,7 @@ public class KeepImprovingStack : Stack
     public KeepImprovingStack()
     {
         var resourceGroup = ResourceGroup.Get("rg-keepimproving-dev-brs", "/subscriptions/39a689b6-9fb4-4598-a6d7-9bd1994848ab/resourceGroups/rg-keepimproving-dev-brs");
-        
+
         var projectName = PulumiNameFormatter.Format(Pulumi.Deployment.Instance.ProjectName);
         var pulumiStack = Pulumi.Deployment.Instance.StackName;
 
@@ -73,8 +73,8 @@ public class KeepImprovingStack : Stack
             ImageName = Output.Format($"{acr.LoginServer}/keepimproving-image:{DateTime.UtcNow.ToString("yyyyMMddhhmmss")}"),
             Build = new DockerBuildArgs
             {
-                Context = "../src/external/private/KeepImproving.API",
-                Dockerfile = "../src/external/private/KeepImproving.API/Dockerfile",
+                Context = "../src",
+                Dockerfile = "../Dockerfile",
                 Platform = "linux/amd64"
             },
             Registry = new Pulumi.Docker.Inputs.RegistryArgs
@@ -97,30 +97,30 @@ public class KeepImprovingStack : Stack
                 LinuxFxVersion = Output.Format($"DOCKER|{image.ImageName}"),
                 AppSettings =
                 {
-                    new NameValuePairArgs 
-                    { 
-                        Name = "DOCKER_REGISTRY_SERVER_URL", 
-                        Value = Output.Format($"https://{acr.LoginServer}") 
+                    new NameValuePairArgs
+                    {
+                        Name = "DOCKER_REGISTRY_SERVER_URL",
+                        Value = Output.Format($"https://{acr.LoginServer}")
                     },
-                    new NameValuePairArgs 
-                    { 
-                        Name = "DOCKER_REGISTRY_SERVER_USERNAME", 
-                        Value = acrUsername 
+                    new NameValuePairArgs
+                    {
+                        Name = "DOCKER_REGISTRY_SERVER_USERNAME",
+                        Value = acrUsername
                     },
-                    new NameValuePairArgs 
-                    { 
-                        Name = "DOCKER_REGISTRY_SERVER_PASSWORD", 
-                        Value = acrPassword 
+                    new NameValuePairArgs
+                    {
+                        Name = "DOCKER_REGISTRY_SERVER_PASSWORD",
+                        Value = acrPassword
                     },
                     new NameValuePairArgs
                     {
                         Name = "WEBSITES_PORT",
                         Value = "8080"
                     },
-                    new NameValuePairArgs 
-                    { 
-                        Name = "ASPNETCORE_ENVIRONMENT", 
-                        Value = "Production" 
+                    new NameValuePairArgs
+                    {
+                        Name = "ASPNETCORE_ENVIRONMENT",
+                        Value = "Production"
                     }
                 },
                 AutoHealEnabled = true,
