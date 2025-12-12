@@ -10,7 +10,7 @@ public static class AuthJwtExtension
     {
         IConfigurationSection? configurationJwt = configuration.GetSection("Jwt");
 
-        string secret = configurationJwt["Key"]!;
+        string secret = configurationJwt["Secret"] ?? throw new InvalidOperationException("You must create locally JWT:Secret");
         byte[] key = Encoding.ASCII.GetBytes(secret);
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
