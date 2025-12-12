@@ -5,6 +5,7 @@ using KeepImproving.API.Extensions;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.ConfigureDatabase(builder.Configuration)
+    .AddJwtAuth(builder.Configuration)
     .AddAuthorization()
     .AddFastEndpointWithSwagger()
     .AddHealthChecks();
@@ -12,6 +13,7 @@ builder.Services.ConfigureDatabase(builder.Configuration)
 WebApplication app = builder.Build();
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseFastEndpoints(options =>
