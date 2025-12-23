@@ -1,0 +1,14 @@
+node_modules/
+*.log
+__pycache__/
+
+.git/
+.gitignore
+
+*.env
+tmp/
+
+.vs/
+**/.vs/
+
+deploy/

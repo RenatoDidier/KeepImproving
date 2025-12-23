@@ -1,6 +1,4 @@
 config:
-  azure-native:location: brazilsouth
-  KeepImproving:dockerHubUser:
-    secure: AAABANuUBC46r3joSSJhKjina6NewEpQTQNZF/JTXE2J9Uhnz5pufRghtZQ=
-  KeepImproving:dockerHubToken:
-    secure: AAABAAoEDUMQ+ycLZYykBHXux+QDxlD9TiwLmFl9x4bvj5FbftnKpHw764WRmrq7d3gUwIYgoeKks70uR0ZHph+it8g=
+  KeepImprovingProject:dbUsername: sqlserveruser
+  KeepImprovingProject:dbPassword:
+    secure: AAABAPzOffsUOH8rqT2w6175W9VFRsioHNdT/TYNfwrVwgHFlS6+ZfbWewso+QwwpxF2
