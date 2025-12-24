@@ -9,28 +9,56 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+
+    - name: Login Azure
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '9.0.x'
 
-    - name: Setup Pulumi
+    - name: Pulumi Up
       uses: pulumi/actions@v4
       with:
         command: up
         stack-name: RenatoDidierFernandes/KeepImprovingProject/dev
         work-dir: deploy
 
-      env:
-        ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-        ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-                
-        PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
-        PULUMI_DOCKERHUB_USER: ${{ secrets.PULUMI_DOCKERHUB_USER }}
-        PULUMI_DOCKERHUB_TOKEN: ${{ secrets.PULUMI_DOCKERHUB_TOKEN }}
+    - name: Export Pulumi Outputs
+      id: pulumi
+      run: |
+        echo "SQL_SERVER=$(pulumi stack output sqlServerName)" >> $GITHUB_ENV
+        echo "SQL_DATABASE=$(pulumi stack output sqlDatabaseName)" >> $GITHUB_ENV
+
+    - name: SQL Bootstrap (AAD)
+      run: |
+        sqlcmd \
+          -S $SQL_SERVER.database.windows.net \
+          -d $SQL_DATABASE \
+          -G \
+          -Q "
+            IF NOT EXISTS (
+              SELECT 1 FROM sys.database_principals
+              WHERE name = 'uami-keepimproving-dev'
+            )
+            BEGIN
+              CREATE USER [uami-keepimproving-dev] FROM EXTERNAL PROVIDER;
+              ALTER ROLE db_datareader ADD MEMBER [uami-keepimproving-dev];
+              ALTER ROLE db_datawriter ADD MEMBER [uami-keepimproving-dev];
+            END
+          "
