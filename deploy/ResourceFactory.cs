@@ -175,8 +175,12 @@ public class ResourceFactory
 
     public Output<string> CreateSqlServerAndDatabaseAndFirewall()
     {
-        string dbUsername = _pulumiSecrets.Require("dbUsername");
-        Output<string> dbPassword = _pulumiSecrets.RequireSecret("dbPassword");
+
+        var grupAcces = new Pulumi.AzureAD.Group($"sql-admins-{_pulumiStack}", new Pulumi.AzureAD.GroupArgs
+        {
+            DisplayName = $"sql-admins-{_pulumiStack}",
+            SecurityEnabled = true
+        });
 
         AzureNative.Sql.Server sqlServer = new("sqlServer", new()
         {
@@ -184,9 +188,17 @@ public class ResourceFactory
             Tags = _tags,
             Location = _resourceGroup.Location,
             ServerName = $"sql-{_projectName}-{_pulumiStack}",
-            AdministratorLogin = dbUsername,
-            AdministratorLoginPassword = dbPassword,
             Version = "12.0",
+        });
+
+        new AzureNative.Sql.ServerAzureADAdministrator("sql-aad-admin", new()
+        {
+            ResourceGroupName = _resourceGroup.Name,
+            ServerName = sqlServer.Name,
+            AdministratorType = "ActiveDirectory",
+            Login = grupAcces.DisplayName,
+            Sid = grupAcces.ObjectId,
+            TenantId = _azureIdentity.TenantId
         });
 
         AzureNative.Sql.Database database = new("sqlDatabase", new()
@@ -206,25 +218,22 @@ public class ResourceFactory
             EndIpAddress = "0.0.0.0"
         });
 
-        Output<string> connectionString = Output.Tuple<string, string, string, string>(
+        Output<string> connectionString = Output.Tuple<string, string>(
                 sqlServer.Name,
-                database.Name,
-                dbUsername,
-                dbPassword
+                database.Name
             )
             .Apply(values =>
             {
-                (string _sqlServer, string _sqlDatabase, string _sqlUser, string _sqlPassword) = values;
+                (string _sqlServer, string _sqlDatabase) = values;
 
                 return $"Server=tcp:{_sqlServer}.database.windows.net,1433;" +
-                       $"Initial Catalog={_sqlDatabase};" +
-                       $"User ID={_sqlUser};" +
-                       $"Password={_sqlPassword};" +
+                       $"Database={_sqlDatabase};" +
+                       "Authentication=Active Directory Managed Identity;" +
                        "Encrypt=True;TrustServerCertificate=False;";
             });
 
 
-        return Output.CreateSecret(connectionString);
+        return connectionString;
     }
 
     public void CreateWebApp(AppServicePlan appServicePlan, Image image, Registry acr, Output<string> acrUsername, Output<string> acrPassword, Output<string> connectionString, UserAssignedIdentity userIdentity)

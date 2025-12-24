@@ -54,11 +54,11 @@ jobs:
           -Q "
             IF NOT EXISTS (
               SELECT 1 FROM sys.database_principals
-              WHERE name = 'uami-keepimproving-dev'
+              WHERE name = 'uami-keepimprovingproject-dev'
             )
             BEGIN
-              CREATE USER [uami-keepimproving-dev] FROM EXTERNAL PROVIDER;
-              ALTER ROLE db_datareader ADD MEMBER [uami-keepimproving-dev];
-              ALTER ROLE db_datawriter ADD MEMBER [uami-keepimproving-dev];
+              CREATE USER [uami-keepimprovingproject-dev] FROM EXTERNAL PROVIDER;
+              ALTER ROLE db_datareader ADD MEMBER [uami-keepimprovingproject-dev];
+              ALTER ROLE db_datawriter ADD MEMBER [uami-keepimprovingproject-dev];
             END
           "
