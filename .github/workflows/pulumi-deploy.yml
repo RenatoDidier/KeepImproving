@@ -1,11 +1,12 @@
 name: Deploy Infra via Pulumi
 
 on:
-  push:
-    branches:
-      - main
-      
   workflow_dispatch:
+    inputs:
+      environment:
+        description: "Ambiente / stack base"
+        required: true
+        default: "dev"
 
 jobs:
   deploy:
@@ -42,7 +43,6 @@ jobs:
         work-dir: deploy
 
     - name: Export Pulumi Outputs
-      id: pulumi
       run: |
         echo "SQL_SERVER=$(pulumi stack output sqlServerName)" >> $GITHUB_ENV
         echo "SQL_DATABASE=$(pulumi stack output sqlDatabaseName)" >> $GITHUB_ENV
