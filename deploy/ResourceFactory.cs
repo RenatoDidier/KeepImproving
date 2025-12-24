@@ -227,9 +227,9 @@ public class ResourceFactory
         return Output.CreateSecret(connectionString);
     }
 
-    public void CreateWebApp(AppServicePlan appServicePlan, Image image, Registry acr, Output<string> acrUsername, Output<string> acrPassword, Output<string> connectionString)
+    public void CreateWebApp(AppServicePlan appServicePlan, Image image, Registry acr, Output<string> acrUsername, Output<string> acrPassword, Output<string> connectionString, UserAssignedIdentity userIdentity)
     {
-        var webApp = new WebApp("webApp", new()
+        var webApp = new WebApp("webApp", new WebAppArgs()
         {
             Kind = "app,linux",
             Tags = _tags,
@@ -237,6 +237,11 @@ public class ResourceFactory
             ResourceGroupName = _resourceGroup.Name,
             Name = $"app-{_projectName}-{_pulumiStack}-api",
             ServerFarmId = appServicePlan.Id,
+            Identity = new ManagedServiceIdentityArgs
+            {
+                Type = AzureNative.Web.ManagedServiceIdentityType.UserAssigned,
+                UserAssignedIdentities = userIdentity.Id
+            },
             SiteConfig = new SiteConfigArgs
             {
                 LinuxFxVersion = Output.Format($"DOCKER|{image.ImageName}"),

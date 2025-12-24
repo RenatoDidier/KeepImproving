@@ -45,7 +45,7 @@ public class KeepImprovingStack : Stack
 
         Output<string> connectionString = resourceFactory.CreateSqlServerAndDatabaseAndFirewall();
 
-        resourceFactory.CreateWebApp(appServicePlan, image, acr, acrUsername, acrPassword, connectionString);
+        resourceFactory.CreateWebApp(appServicePlan, image, acr, acrUsername, acrPassword, connectionString, userIdentity);
 
     }
 }
