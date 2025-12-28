@@ -44,18 +44,15 @@ jobs:
 
     - name: Install sqlcmd
       run: |
+        curl -sSL https://packages.microsoft.com/keys/microsoft.asc \
+          | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
+
+        echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] \
+          https://packages.microsoft.com/ubuntu/22.04/prod jammy main" \
+          | sudo tee /etc/apt/sources.list.d/microsoft-prod.list
+
         sudo apt-get update
-        sudo apt-get install -y curl apt-transport-https gnupg lsb-release
-
-        curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-
-        sudo add-apt-repository "$(curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list)"
-
-        sudo apt-get update
-        sudo apt-get install -y mssql-tools18 unixodbc-dev
-
-        echo "/opt/mssql-tools18/bin" >> $GITHUB_PATH
-
+        sudo apt-get install -y sqlcmd
 
     - name: Pulumi Up
       uses: pulumi/actions@v4
